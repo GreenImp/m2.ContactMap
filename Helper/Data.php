@@ -17,32 +17,37 @@ class Data extends AbstractHelper
     /**
      * Enabled Config Path
      */
-    const XML_CONTACTMAP_ENABLED = 'contact/map/enabled';
+    const XML_CONTACTMAP_ENABLED = 'contact_map/map/enabled';
     	
     /**
      * Latitude Config Path
      */
-    const XML_CONTACTMAP_LATITUDE = 'contact/map/latitude';
+    const XML_CONTACTMAP_LATITUDE = 'contact_map/map_details/latitude';
 
     /**
      * Longitude Config Path
      */
-    const XML_CONTACTMAP_LONGITUDE = 'contact/map/longitude';
+    const XML_CONTACTMAP_LONGITUDE = 'contact_map/map_details/longitude';
 
     /**
      * Zoom Level Config Path
      */
-    const XML_CONTACTMAP_ZOOM = 'contact/map/zoom';
+    const XML_CONTACTMAP_ZOOM = 'contact_map/map_details/zoom';
  
     /**
      * Api Key Config Path
      */
-    const XML_CONTACTMAP_API_KEY = 'contact/map/api_key';
+    const XML_CONTACTMAP_API_KEY = 'contact_map/map_type_%s/api_key';
 
     /**
      * Marker Image Config Path
      */
-    const XML_CONTACTMAP_MARKER = 'contact/map/marker';
+    const XML_CONTACTMAP_MARKER = 'contact_map/map_details/marker';
+
+    /**
+     * Map Type Config Path
+     */
+    const XML_CONTACTMAP_TYPE = 'contact_map/map/map_type';
  	
     /**
      * Check ContactMap Functionality Should Be Enabled
@@ -52,8 +57,18 @@ class Data extends AbstractHelper
     public function isEnabled()
     {
         return $this->_getConfig(self::XML_CONTACTMAP_ENABLED) && $this->getApiKey();
-    } 
-    
+    }
+
+    /**
+     * Returns the type of map to be displayed (ie. Google, MapBox)
+     *
+     * @return null|string
+     */
+    public function getMapType()
+    {
+        return $this->_getConfig(self::XML_CONTACTMAP_TYPE);
+    }
+
     /**
      * Retrieve Marker Icon
      *
@@ -62,7 +77,7 @@ class Data extends AbstractHelper
     public function getMarkerIcon()
     {
 		return $this->_getConfig(self::XML_CONTACTMAP_MARKER);
-    } 
+    }
     
     /**
      * Retrieve Map Zoom
@@ -72,17 +87,17 @@ class Data extends AbstractHelper
     public function getZoom()
     {
 		return $this->_getConfig(self::XML_CONTACTMAP_ZOOM);
-    } 
+    }
     
     /**
      * Retrieve Map Api Key
      *
-     * @return string
+     * @return null|string
      */
     public function getApiKey()
     {
-		return $this->_getConfig(self::XML_CONTACTMAP_API_KEY);
-    } 
+        return $this->_getConfig(self::XML_CONTACTMAP_API_KEY);
+    }
             
     /**
      * Retrieve Marker Position
@@ -94,9 +109,10 @@ class Data extends AbstractHelper
 		$config = [
 			'lat' => $this->_getConfig(self::XML_CONTACTMAP_LATITUDE),
 			'lng' => $this->_getConfig(self::XML_CONTACTMAP_LONGITUDE)
-		];        
+		];
+
         return $config;
-    } 
+    }
     
     /**
      * Retrieve Store Configuration Data
@@ -106,6 +122,12 @@ class Data extends AbstractHelper
      */
     protected function _getConfig($path)
     {
+        // replace any placeholders with the map type
+        // this allows us to use methods like `getAPI` regardless of the selected map type
+        if($path !== self::XML_CONTACTMAP_TYPE){
+            $path = sprintf($path, $this->getMapType());
+        }
+
         return $this->scopeConfig->getValue($path, ScopeInterface::SCOPE_STORE);
-    }      
+    }
 }

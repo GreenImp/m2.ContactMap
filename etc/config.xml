@@ -9,12 +9,23 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
-        <contact>
+        <contact_map>
             <map>
                 <enabled>1</enabled>
-				<api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
-                <zoom>17</zoom>
+                <map_type>google</map_type>
             </map>
-        </contact>
+
+            <map_type_google>
+                <api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+            </map_type_google>
+
+            <map_type_mapbox>
+                <api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+            </map_type_mapbox>
+
+            <map_details>
+                <zoom>17</zoom>
+            </map_details>
+        </contact_map>
     </default>
 </config>
