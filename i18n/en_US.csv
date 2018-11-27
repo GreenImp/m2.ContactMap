@@ -4,10 +4,13 @@
 "Enable Map","Enable Map"
 "Google Map","Google Map"
 "Latitude","Latitude"
+"Leave empty to use default","Leave empty to use default"
 "Longitude","Longitude"
 "Map Type","Map Type"
 "MapBox","MapBox"
+"Marker Color","Marker Color",
 "Marker Icon","Marker Icon"
 "Must be a URL to valid MapBox style","Must be a URL to valid MapBox style"
 "Style URL","Style URL"
+"This only works for certain map types","This only works for certain map types"
 "Zoom Level","Zoom Level"

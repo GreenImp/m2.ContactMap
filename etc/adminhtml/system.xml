@@ -86,12 +86,22 @@
                         <field id="contact_map/map/enabled">1</field>
                     </depends>
                 </field>
+            </group>
 
-                <field id="marker" translate="label comment" type="image" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="marker" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="icon" translate="label comment" type="image" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Marker Icon</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Image</backend_model>
                     <upload_dir config="system/filesystem/media" scope_info="1">contact/map/marker</upload_dir>
                     <base_url type="media" scope_info="1">contact/map/marker</base_url>
+                    <comment>Leave empty to use default</comment>
+                </field>
+
+                <field id="color" translate="label comment" type="text" sortOrder="61" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Marker Color</label>
+                    <comment>This only works for certain map types</comment>
+
+                    <frontend_model>Faonni\ContactMap\Block\ColorPicker</frontend_model>
                 </field>
             </group>
         </section>

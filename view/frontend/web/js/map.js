@@ -104,17 +104,17 @@ define(['jquery',],
            * Builds a marker
            *
            * @param {{lat: number, lng: number}|number[]} position
-           * @param {string} icon
+           * @param {{}=} options
            * @returns {google.maps.Marker}
            */
-          build: function(position, icon){
-            var positionObj = mapLibs.google.getLatLng(position);
+          build: function (position, options) {
+            var positionObj = mapLibs.google.getLatLng(position),
+              opts = $.extend({}, {
+                position: positionObj,
+                draggable: false,
+              }, options);
 
-            return new google.maps.Marker({
-              position: positionObj,
-              draggable: false,
-              icon: icon
-            });
+            return new google.maps.Marker(opts);
           },
         },
         /**
@@ -237,13 +237,13 @@ define(['jquery',],
            * Builds a marker
            *
            * @param {{lat: number, lng: number}|number[]} position
-           * @param {string} icon
+           * @param {{}=} options
            * @returns {mapboxgl.Marker}
            */
-          build: function(position, icon){
+          build: function (position, options) {
             var positionObj = mapLibs.mapbox.getLatLng(position);
 
-            return new mapboxgl.Marker().setLngLat(positionObj)
+            return new mapboxgl.Marker(options).setLngLat(positionObj);
           },
         },
         /**
@@ -334,11 +334,11 @@ define(['jquery',],
        * @param {{}=} config
        */
       init: function (config) {
-        this.mapType = config.mapType || 'google';
+        this.mapType = config.map_type || 'google';
 
         this.config = $.extend({}, defaultConfig, mapLibs[this.mapType].config, mapConfig(config, mapLibs[this.mapType].configMap));
 
-        mapLibs[this.mapType].authoriseAPI(config.apiKey);
+        mapLibs[this.mapType].authoriseAPI(config.api_key);
 
         if (this.mapType === 'google') {
           google.maps.event.addDomListener(window, 'load', this.initMaps.bind(this));
@@ -364,24 +364,28 @@ define(['jquery',],
        * @param {*} mapBox
        */
       initMap: function (key, mapBox) {
-        var $mapBox = $(mapBox),
-          json = atob($mapBox.attr('data-marker')),
-          collection = JSON.parse(json);
+        // decode the marker data
+        var collection = JSON.parse(atob(mapBox.getAttribute('data-marker')));
 
+        // build up a storage object for the map
         this.locator[key] = {
           bounds: mapLibs[this.mapType].bounds.get(),
           markers: [],
           map: mapLibs[this.mapType].buildMap(mapBox, this.config),
         };
 
-        // loop through each marker data and build the marker
+        // loop through each marker data and build the markers
         collection.forEach(function (data) {
-          if ((data.lat === null) || (data.lng === null)) {
+          var position, marker;
+
+          // don't add the marker if it has no position
+          if (!data.position || (data.position.lat === null) || (data.position.lng === null)) {
             return;
           }
 
-          var position = mapLibs[this.mapType].getLatLng(data),
-              marker = this.buildMarker(position, collection.icon);
+          position = mapLibs[this.mapType].getLatLng(data.position);
+          // build the marker object
+          marker = this.buildMarker(position, data.options);
 
           // add the marker to the list
           this.locator[key].markers.push(marker);
@@ -408,11 +412,11 @@ define(['jquery',],
        * Builds a marker
        *
        * @param {{lat: number, lng: number}|number[]} position
-       * @param {string} icon
+       * @param {{}=} options
        * @returns {google.maps.Marker|mapboxgl.Marker}
        */
-      buildMarker: function (position, icon) {
-        return mapLibs[this.mapType].markers.build(position, icon);
+      buildMarker: function (position, options) {
+        return mapLibs[this.mapType].markers.build(position, options);
       },
 
       /**

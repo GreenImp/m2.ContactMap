@@ -136,6 +136,26 @@ class Map extends Template
     }
 
     /**
+     * Retrieve Marker Data as a base64 encoded JSON string
+     *
+     * @return string
+     */
+    public function getMarkerData()
+    {
+        $markerData = $this->_helper->getMarkerData();
+
+        $marker = [
+            'position' => $this->_helper->getMarkerPosition(),
+            'options' => [
+                'icon' => $this->getMarkerIconSrc() ?: null,
+                'color' => $markerData['color'],
+            ],
+        ];
+
+        return base64_encode(json_encode([$marker]));
+    }
+
+    /**
      * Retrieve Map Zoom
      *
      * @return string
@@ -143,19 +163,6 @@ class Map extends Template
     public function getZoom()
     {
         return $this->_helper->getZoom();
-    }
-
-    /**
-     * Retrieve Marker Position
-     *
-     * @return array
-     */
-    public function getMarkerPosition()
-    {
-        $marker = $this->_helper->getMarkerPosition();
-        $marker['icon'] = $this->getMarkerIconSrc() ?: null;
-
-        return base64_encode(json_encode([$marker]));
     }
 
     /**

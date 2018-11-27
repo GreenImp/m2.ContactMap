@@ -41,9 +41,9 @@ class Data extends AbstractHelper
     const XML_CONTACTMAP_API_KEY = 'api_key';
 
     /**
-     * Marker Image Config Path
+     * Marker Config Path
      */
-    const XML_CONTACTMAP_MARKER = 'contact_map/map_details/marker';
+    const XML_CONTACTMAP_MARKER = 'contact_map/marker';
 
     /**
      * Map Type Config Path
@@ -86,13 +86,22 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Returns all of the marker related data
+     *
+     * @return array
+     */
+    public function getMarkerData(){
+        return $this->_getConfig(self::XML_CONTACTMAP_MARKER);
+    }
+
+    /**
      * Retrieve Marker Icon
      *
      * @return string
      */
     public function getMarkerIcon()
     {
-		return $this->_getConfig(self::XML_CONTACTMAP_MARKER);
+        return $this->getMarkerData()['icon'];
     }
 
     /**
@@ -122,12 +131,10 @@ class Data extends AbstractHelper
      */
     public function getMarkerPosition()
     {
-		$config = [
-			'lat' => $this->_getConfig(self::XML_CONTACTMAP_LATITUDE),
-			'lng' => $this->_getConfig(self::XML_CONTACTMAP_LONGITUDE)
-		];
-
-        return $config;
+        return [
+            'lat' => $this->_getConfig(self::XML_CONTACTMAP_LATITUDE),
+            'lng' => $this->_getConfig(self::XML_CONTACTMAP_LONGITUDE)
+        ];
     }
 
     /**

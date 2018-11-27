@@ -7,7 +7,7 @@
 /** @var $block \Faonni\ContactMap\Block\Map */
 ?>
 <?php if ($block->isEnabled()) : ?>
-<div id="contact-map" class="page-map" data-marker="<?php echo $block->getMarkerPosition() ?>"></div>
+<div id="contact-map" class="page-map" data-marker="<?php echo $block->getMarkerData() ?>"></div>
 
 <script type="text/javascript">
 	require(
