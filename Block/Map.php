@@ -73,6 +73,21 @@ class Map extends Template
     }
 
     /**
+     * Returns all of the config values, with map type specific ones merged in
+     *
+     * @return array
+     */
+    public function getMapConfig(){
+        return array_merge(
+            [
+                'map_type' => $this->getMapType(),
+                'zoom' => $this->getZoom(),
+            ],
+            $this->getMapTypeConfig()
+        );
+    }
+
+    /**
      * Returns the type of map to be displayed (ie. Google, MapBox)
      *
      * @return null|string
@@ -80,6 +95,16 @@ class Map extends Template
     public function getMapType()
     {
         return $this->_helper->getMapType();
+    }
+
+    /**
+     * Returns all of the config values for the given map type
+     *
+     * @return array
+     */
+    public function getMapTypeConfig()
+    {
+        return $this->_helper->getMapTypeConfig();
     }
 
     /**

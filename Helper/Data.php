@@ -1,9 +1,10 @@
 <?php
 /**
  * Copyright © 2011-2018 Karliuka Vitalii(karliuka.vitalii@gmail.com)
- * 
+ *
  * See COPYING.txt for license details.
  */
+
 namespace Faonni\ContactMap\Helper;
 
 use Magento\Store\Model\ScopeInterface;
@@ -18,7 +19,7 @@ class Data extends AbstractHelper
      * Enabled Config Path
      */
     const XML_CONTACTMAP_ENABLED = 'contact_map/map/enabled';
-    	
+
     /**
      * Latitude Config Path
      */
@@ -33,11 +34,11 @@ class Data extends AbstractHelper
      * Zoom Level Config Path
      */
     const XML_CONTACTMAP_ZOOM = 'contact_map/map_details/zoom';
- 
+
     /**
      * Api Key Config Path
      */
-    const XML_CONTACTMAP_API_KEY = 'contact_map/map_type_%s/api_key';
+    const XML_CONTACTMAP_API_KEY = 'api_key';
 
     /**
      * Marker Image Config Path
@@ -48,7 +49,12 @@ class Data extends AbstractHelper
      * Map Type Config Path
      */
     const XML_CONTACTMAP_TYPE = 'contact_map/map/map_type';
- 	
+
+    /**
+     * Map Type Configs Config Path
+     */
+    const XML_CONTACTMAP_TYPE_CONFIG = 'contact_map/map_type_%s';
+
     /**
      * Check ContactMap Functionality Should Be Enabled
      *
@@ -70,6 +76,16 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Returns all of the config values for the given map type
+     *
+     * @return array
+     */
+    public function getMapTypeConfig()
+    {
+        return $this->_getConfig(self::XML_CONTACTMAP_TYPE_CONFIG);
+    }
+
+    /**
      * Retrieve Marker Icon
      *
      * @return string
@@ -78,7 +94,7 @@ class Data extends AbstractHelper
     {
 		return $this->_getConfig(self::XML_CONTACTMAP_MARKER);
     }
-    
+
     /**
      * Retrieve Map Zoom
      *
@@ -86,9 +102,9 @@ class Data extends AbstractHelper
      */
     public function getZoom()
     {
-		return $this->_getConfig(self::XML_CONTACTMAP_ZOOM);
+        return $this->_getConfig(self::XML_CONTACTMAP_ZOOM);
     }
-    
+
     /**
      * Retrieve Map Api Key
      *
@@ -96,9 +112,9 @@ class Data extends AbstractHelper
      */
     public function getApiKey()
     {
-        return $this->_getConfig(self::XML_CONTACTMAP_API_KEY);
+        return $this->_getConfig(self::XML_CONTACTMAP_TYPE_CONFIG . '/' . self::XML_CONTACTMAP_API_KEY);
     }
-            
+
     /**
      * Retrieve Marker Position
      *
@@ -113,18 +129,18 @@ class Data extends AbstractHelper
 
         return $config;
     }
-    
+
     /**
      * Retrieve Store Configuration Data
      *
      * @param   string $path
-     * @return  string|null
+     * @return mixed
      */
     protected function _getConfig($path)
     {
         // replace any placeholders with the map type
         // this allows us to use methods like `getAPI` regardless of the selected map type
-        if($path !== self::XML_CONTACTMAP_TYPE){
+        if ($path !== self::XML_CONTACTMAP_TYPE) {
             $path = sprintf($path, $this->getMapType());
         }
 

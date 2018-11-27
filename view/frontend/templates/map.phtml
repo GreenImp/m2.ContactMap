@@ -17,11 +17,7 @@
           <?= ($block->getMapType() == 'mapbox') ? "'mapboxgl'" : ''; ?>
         ],
 		function($, map, mapboxgl){
-			map.init({
-              apiKey: '<?= $block->getApiKey(); ?>',
-              mapType: '<?= $block->getMapType(); ?>',
-              zoom: <?= $block->getZoom(); ?>,
-			});
+			map.init(<?= json_encode($block->getMapConfig()); ?>);
 		});
 </script>
 <?php endif; ?>
