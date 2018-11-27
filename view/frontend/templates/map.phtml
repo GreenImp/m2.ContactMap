@@ -18,6 +18,8 @@
         ],
 		function($, map, mapboxgl){
 			map.init({
+              apiKey: '<?= $block->getApiKey(); ?>',
+              mapType: '<?= $block->getMapType(); ?>',
               zoom: <?= $block->getZoom(); ?>,
 			});
 		});
