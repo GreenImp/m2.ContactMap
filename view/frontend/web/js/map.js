@@ -7,11 +7,33 @@ define(['jquery',],
      * @param coords
      * @returns {{lat: number, lng: number}}
      */
-    var parseLatLng = function(coords){
+    var parseLatLng = function (coords) {
       return {
         lat: Number(coords.lat ? ((typeof coords.lat === 'function') ? coords.lat() : coords.lat) : coords[0] || 0),
         lng: Number(coords.lng ? ((typeof coords.lng === 'function') ? coords.lng() : coords.lng) : coords[0] || 0),
       };
+    };
+
+    /**
+     * Maps the config values to the matching key in `map`
+     *
+     * @param {{}} config
+     * @param {{}} map
+     * @returns {{}}
+     */
+    var mapConfig = function (config, map) {
+      var mapped = {};
+
+      if (map) {
+        // loop through and insert each item using the mapped key, or its own if no mapped exists
+        Object.keys(config).forEach(function (key) {
+          mapped[map[key] || key] = config[key];
+        });
+      } else {
+        mapped = config;
+      }
+
+      return mapped;
     };
 
     /**
@@ -29,7 +51,7 @@ define(['jquery',],
          *
          * @param {string} apiKey
          */
-        authoriseAPI: function(apiKey){
+        authoriseAPI: function (apiKey) {
           // nothing to do here - Google Maps API passes the key in the URL when including the JS
         },
         bounds: {
@@ -41,8 +63,8 @@ define(['jquery',],
            * @param {{lat: number, lng: number}[]|number[][]|google.maps.LatLng[]=} bounds
            * @returns {google.maps.LatLngBounds}
            */
-          get: function(bounds){
-            if(bounds){
+          get: function (bounds) {
+            if (bounds) {
               bounds = mapLibs.google.getLatLngs(bounds);
             }
 
@@ -54,7 +76,7 @@ define(['jquery',],
            * @param {google.maps.LatLngBounds} bounds
            * @returns {google.maps.LatLng}
            */
-          getCenter: function(bounds){
+          getCenter: function (bounds) {
             return bounds.getCenter();
           },
           /**
@@ -64,7 +86,7 @@ define(['jquery',],
            * @param {{lat: number, lng: number}[]|number[][]|google.maps.LatLng[]} extendTo
            * @returns {google.maps.LatLngBounds}
            */
-          extend: function(bounds, extendTo){
+          extend: function (bounds, extendTo) {
             return bounds.extend(extendTo);
           },
         },
@@ -75,7 +97,7 @@ define(['jquery',],
            * @param {google.maps.Marker} marker
            * @param {google.maps.Map} map
            */
-          add: function(marker, map){
+          add: function (marker, map) {
             marker.setMap(map);
           },
           /**
@@ -102,7 +124,7 @@ define(['jquery',],
          * @param {{}=} config
          * @returns {google.maps.Map}
          */
-        buildMap: function(element, config){
+        buildMap: function (element, config) {
           var mapConfig = $.extend({}, mapLibs.google.config, config);
 
           return new google.maps.Map(element, mapConfig);
@@ -113,7 +135,7 @@ define(['jquery',],
          * @param {{lat: number, lng: number}|number[]} coords
          * @returns {google.maps.LatLng}
          */
-        getLatLng: function(coords){
+        getLatLng: function (coords) {
           return new google.maps.LatLng(parseLatLng(coords));
         },
         /**
@@ -123,8 +145,8 @@ define(['jquery',],
          * @param {{lat: number, lng: number}[]|number[][]|google.maps.LatLng[]=} coordList
          * @returns {google.maps.LatLng[]}
          */
-        getLatLngs: function(coordList){
-          return coordList.map(function(coords){
+        getLatLngs: function (coordList) {
+          return coordList.map(function (coords) {
             return mapLibs.google.getLatLng(coords);
           });
         },
@@ -134,7 +156,7 @@ define(['jquery',],
          * @param {Number} zoom
          * @param {google.maps.Map} map
          */
-        setZoom: function(zoom, map){
+        setZoom: function (zoom, map) {
           map.setZoom(zoom);
         },
         /**
@@ -143,13 +165,13 @@ define(['jquery',],
          * @param {{lat: number, lng: number}|number[]} center
          * @param {google.maps.Map} map
          */
-        setCenter: function(center, map){
+        setCenter: function (center, map) {
           map.setCenter(center);
         },
       },
       mapbox: {
         config: {
-          scrollZoom : false,
+          scrollZoom: false,
           style: 'mapbox://styles/mapbox/streets-v10',
         },
         /**
@@ -157,7 +179,7 @@ define(['jquery',],
          *
          * @param {string} apiKey
          */
-        authoriseAPI: function(apiKey){
+        authoriseAPI: function (apiKey) {
           mapboxgl = mapboxgl || require('mapboxgl');
 
           mapboxgl.accessToken = apiKey;
@@ -171,8 +193,8 @@ define(['jquery',],
            * @param {{lat: number, lng: number}[]|number[][]|google.maps.LatLng[]=} bounds
            * @returns {mapboxgl.LngLatBounds}
            */
-          get: function(bounds){
-            if(bounds){
+          get: function (bounds) {
+            if (bounds) {
               bounds = mapLibs.google.getLatLngs(bounds);
             }
 
@@ -184,7 +206,7 @@ define(['jquery',],
            * @param {mapboxgl.LngLatBounds} bounds
            * @returns {mapboxgl.LngLat}
            */
-          getCenter: function(bounds){
+          getCenter: function (bounds) {
             return bounds.getCenter();
           },
           /**
@@ -194,9 +216,12 @@ define(['jquery',],
            * @param {{lat: number, lng: number}[]|number[][]|mapboxgl.LngLat[]} extendTo
            * @returns {mapboxgl.LngLatBounds}
            */
-          extend: function(bounds, extendTo){
+          extend: function (bounds, extendTo) {
             return bounds.extend(extendTo);
           },
+        },
+        configMap: {
+          style_url: 'style',
         },
         markers: {
           /**
@@ -205,7 +230,7 @@ define(['jquery',],
            * @param {mapboxgl.Marker} marker
            * @param map
            */
-          add: function(marker, map){
+          add: function (marker, map) {
             marker.addTo(map);
           },
           /**
@@ -228,7 +253,7 @@ define(['jquery',],
          * @param {{}=} config
          * @returns {mapboxgl.Map}
          */
-        buildMap: function(element, config){
+        buildMap: function (element, config) {
           var mapConfig = $.extend({}, mapLibs.mapbox.config, config, {container: element});
 
           return new mapboxgl.Map(mapConfig);
@@ -239,7 +264,7 @@ define(['jquery',],
          * @param {{lat: number, lng: number}|number[]} coords
          * @returns {mapboxgl.LngLat}
          */
-        getLatLng: function(coords){
+        getLatLng: function (coords) {
           coords = parseLatLng(coords);
 
           return new mapboxgl.LngLat(coords.lng, coords.lat);
@@ -251,8 +276,8 @@ define(['jquery',],
          * @param {{lat: number, lng: number}[]|number[][]=} coordList
          * @returns {mapboxgl.LngLat[]}
          */
-        getLatLngs: function(coordList){
-          return coordList.map(function(coords){
+        getLatLngs: function (coordList) {
+          return coordList.map(function (coords) {
             return mapLibs.mapbox.getLatLng(coords);
           });
         },
@@ -262,7 +287,7 @@ define(['jquery',],
          * @param {Number} zoom
          * @param {mapboxgl.Map} map
          */
-        setZoom: function(zoom, map){
+        setZoom: function (zoom, map) {
           map.setZoom(zoom);
         },
         /**
@@ -271,7 +296,7 @@ define(['jquery',],
          * @param {{lat: number, lng: number}|number[]} center
          * @param {mapboxgl.Map} map
          */
-        setCenter: function(center, map){
+        setCenter: function (center, map) {
           map.setCenter(center);
         },
       },
@@ -288,6 +313,14 @@ define(['jquery',],
       scaleControl: false,
       rotateControl: false,
     });
+    /*{
+      disableDefaultUI: this.config.disableDefaultUI,
+      zoomControl: this.config.zoomControl,
+      mapTypeControl: this.config.mapTypeControl,
+      scaleControl: this.config.scaleControl,
+      streetViewControl: this.config.streetViewControl,
+      rotateControl: this.config.rotateControl
+    }*/
 
 
     return {
@@ -303,13 +336,13 @@ define(['jquery',],
       init: function (config) {
         this.mapType = config.mapType || 'google';
 
-        this.config = $.extend({}, defaultConfig, mapLibs[this.mapType].config, config);
+        this.config = $.extend({}, defaultConfig, mapLibs[this.mapType].config, mapConfig(config, mapLibs[this.mapType].configMap));
 
         mapLibs[this.mapType].authoriseAPI(config.apiKey);
 
-        if(this.mapType === 'google') {
+        if (this.mapType === 'google') {
           google.maps.event.addDomListener(window, 'load', this.initMaps.bind(this));
-        }else{
+        } else {
           this.initMaps();
         }
       },
@@ -338,14 +371,7 @@ define(['jquery',],
         this.locator[key] = {
           bounds: mapLibs[this.mapType].bounds.get(),
           markers: [],
-          map: mapLibs[this.mapType].buildMap(mapBox, {
-            disableDefaultUI: this.config.disableDefaultUI,
-            zoomControl: this.config.zoomControl,
-            mapTypeControl: this.config.mapTypeControl,
-            scaleControl: this.config.scaleControl,
-            streetViewControl: this.config.streetViewControl,
-            rotateControl: this.config.rotateControl
-          }),
+          map: mapLibs[this.mapType].buildMap(mapBox, this.config),
         };
 
         // loop through each marker data and build the marker
@@ -395,7 +421,7 @@ define(['jquery',],
        * @param {*} marker
        * @param {*} map
        */
-      addMarker: function(marker, map){
+      addMarker: function (marker, map) {
         mapLibs[this.mapType].markers.add(marker, map);
       },
 
@@ -419,7 +445,7 @@ define(['jquery',],
        * @param {{lat: number, lng: number}|number[]} center
        * @param {*} map
        */
-      setPosition: function(zoom, center, map){
+      setPosition: function (zoom, center, map) {
         this.setZoom(zoom, map);
         this.setCenter(center, map);
       },
@@ -430,7 +456,7 @@ define(['jquery',],
        * @param {{lat: number, lng: number}|number[]} center
        * @param {*} map
        */
-      setCenter: function(center, map){
+      setCenter: function (center, map) {
         mapLibs[this.mapType].setCenter(center, map);
       },
 
@@ -440,7 +466,7 @@ define(['jquery',],
        * @param {Number} zoom
        * @param {*} map
        */
-      setZoom: function(zoom, map){
+      setZoom: function (zoom, map) {
         mapLibs[this.mapType].setZoom(zoom, map);
       }
     };
