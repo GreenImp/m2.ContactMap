@@ -1,5 +1,5 @@
-define(['jquery'],
-  function ($) {
+define(['jquery',],
+  function ($, mapboxgl) {
     'use strict';
 
     return {

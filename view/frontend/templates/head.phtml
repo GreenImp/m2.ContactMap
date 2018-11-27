@@ -4,7 +4,17 @@
  * 
  * See COPYING.txt for license details.
  */
+/** @var $block \Faonni\ContactMap\Block\Head */
+
+$mapType = $block->getMapType();
 ?>
-<?php if ($block->isEnabled()) : ?>
-<script src="https://maps.googleapis.com/maps/api/js?key=<?php echo $block->getApiKey() ?>&language=<?php echo $block->getLocale() ?>" async defer></script>
+<?php if ($block->isEnabled() && $mapType) : ?>
+    <?php if($mapType == 'google'): ?>
+        <script
+                src="https://maps.googleapis.com/maps/api/js?key=<?php echo $block->getApiKey() ?>&language=<?php echo $block->getLocale() ?>"
+                async defer
+        ></script>
+    <?php elseif($mapType == 'mapbox'): ?>
+        <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.51.0/mapbox-gl.css" rel="stylesheet" />
+    <?php endif; ?>
 <?php endif ?>

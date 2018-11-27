@@ -1,9 +1,10 @@
 <?php
 /**
  * Copyright © 2011-2018 Karliuka Vitalii(karliuka.vitalii@gmail.com)
- * 
+ *
  * See COPYING.txt for license details.
  */
+
 namespace Faonni\ContactMap\Block;
 
 use Magento\Framework\View\Element\Template;
@@ -22,34 +23,35 @@ class Map extends Template
      *
      * @var \Faonni\ContactMap\Helper\Data
      */
-    protected $_helper; 
-	
+    protected $_helper;
+
     /**
      * Media Storage Helper
      *
      * @var \Magento\MediaStorage\Helper\File\Storage\Database
      */
     protected $_fileStorageHelper;
-    
+
     /**
      * Initialize Block
      *
      * @param Context $context
-     * @param StorageHelper $fileStorageHelper	 
+     * @param StorageHelper $fileStorageHelper
      * @param ContactMapHelper $helper
      * @param array $data
      */
     public function __construct(
-		Context $context,
-		StorageHelper $fileStorageHelper,
-		ContactMapHelper $helper,
-		array $data = []
-	) {
+        Context $context,
+        StorageHelper $fileStorageHelper,
+        ContactMapHelper $helper,
+        array $data = []
+    )
+    {
         $this->_fileStorageHelper = $fileStorageHelper;
-		$this->_helper = $helper;
+        $this->_helper = $helper;
         parent::__construct($context, $data);
     }
-    
+
     /**
      * Check ContactMap Functionality Should Be Enabled
      *
@@ -58,8 +60,28 @@ class Map extends Template
     public function isEnabled()
     {
         return $this->_helper->isEnabled();
-    } 
-    
+    }
+
+    /**
+     * Retrieve Map Api Key
+     *
+     * @return string
+     */
+    public function getApiKey()
+    {
+        return $this->_helper->getApiKey();
+    }
+
+    /**
+     * Returns the type of map to be displayed (ie. Google, MapBox)
+     *
+     * @return null|string
+     */
+    public function getMapType()
+    {
+        return $this->_helper->getMapType();
+    }
+
     /**
      * Retrieve Marker Icon
      *
@@ -67,9 +89,9 @@ class Map extends Template
      */
     public function getMarkerIcon()
     {
-		return $this->_helper->getMarkerIcon();
-    } 
-    
+        return $this->_helper->getMarkerIcon();
+    }
+
     /**
      * Retrieve Marker Icon Url
      *
@@ -77,17 +99,17 @@ class Map extends Template
      */
     public function getMarkerIconSrc()
     {
-		if ($this->getMarkerIcon()) {
-			$folderName = 'contact/map/marker';
-			$path = $folderName . '/' . $this->getMarkerIcon();
-			if ($this->_isFile($path)) {
-				return $this->_urlBuilder
-					->getBaseUrl(['_type' => UrlInterface::URL_TYPE_MEDIA]) . $path;				
-			}
-		}
-		return null;
+        if ($this->getMarkerIcon()) {
+            $folderName = 'contact/map/marker';
+            $path = $folderName . '/' . $this->getMarkerIcon();
+            if ($this->_isFile($path)) {
+                return $this->_urlBuilder
+                        ->getBaseUrl(['_type' => UrlInterface::URL_TYPE_MEDIA]) . $path;
+            }
+        }
+        return null;
     }
-    
+
     /**
      * Retrieve Map Zoom
      *
@@ -95,9 +117,9 @@ class Map extends Template
      */
     public function getZoom()
     {
-		return $this->_helper->getZoom();
-    } 
-            
+        return $this->_helper->getZoom();
+    }
+
     /**
      * Retrieve Marker Position
      *
@@ -105,24 +127,24 @@ class Map extends Template
      */
     public function getMarkerPosition()
     {
-		$marker = $this->_helper->getMarkerPosition();
-		$marker['icon'] = $this->getMarkerIconSrc() ?: null;
-		
-		return base64_encode(json_encode([$marker]));
+        $marker = $this->_helper->getMarkerPosition();
+        $marker['icon'] = $this->getMarkerIconSrc() ?: null;
+
+        return base64_encode(json_encode([$marker]));
     }
-	
+
     /**
      * If Db File Storage Is On - Find There, Otherwise - Just file_exists
      *
-     * @param string $filename 
+     * @param string $filename
      * @return bool
      */
     protected function _isFile($filename)
     {
-        if ($this->_fileStorageHelper->checkDbUsage() && 
-				!$this->getMediaDirectory()->isFile($filename)) {
+        if ($this->_fileStorageHelper->checkDbUsage() &&
+            !$this->getMediaDirectory()->isFile($filename)) {
             $this->_fileStorageHelper->saveFileToFilesystem($filename);
         }
         return $this->getMediaDirectory()->isFile($filename);
-    }	
+    }
 }
