@@ -10,6 +10,7 @@
 *.vi
 *~
 *.sass-cache
+node_modules
 
 
 # IOS/Mac specific
