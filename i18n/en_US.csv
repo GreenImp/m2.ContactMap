@@ -8,4 +8,6 @@
 "Map Type","Map Type"
 "MapBox","MapBox"
 "Marker Icon","Marker Icon"
+"Must be a URL to valid MapBox style","Must be a URL to valid MapBox style"
+"Style URL","Style URL"
 "Zoom Level","Zoom Level"

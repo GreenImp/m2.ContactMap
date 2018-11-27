@@ -21,6 +21,8 @@
 
             <map_type_mapbox>
                 <api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+
+                <style_url>mapbox://styles/mapbox/streets-v10</style_url>
             </map_type_mapbox>
 
             <map_details>

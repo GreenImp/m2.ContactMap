@@ -52,9 +52,14 @@
                     <field id="contact_map/map/map_type">mapbox</field>
                 </depends>
 
-                <field id="api_key" translate="label" type="obscure" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="api_key" translate="label" type="obscure" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Api Key</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+
+                <field id="style_url" translate="label comment" type="text" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Style URL</label>
+                    <comment>Must be a URL to valid MapBox style</comment>
                 </field>
             </group>
 
