@@ -8,6 +8,7 @@
 "Longitude","Longitude"
 "Map Type","Map Type"
 "MapBox","MapBox"
+"Marker","Marker"
 "Marker Color","Marker Color",
 "Marker Icon","Marker Icon"
 "Must be a URL to valid MapBox style","Must be a URL to valid MapBox style"

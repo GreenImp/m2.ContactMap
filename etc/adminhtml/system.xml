@@ -95,6 +95,11 @@
             </group>
 
             <group id="marker" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Marker</label>
+                <depends>
+                    <field id="contact_map/map/enabled">1</field>
+                </depends>
+
                 <field id="icon" translate="label comment" type="image" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Marker Icon</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Image</backend_model>
