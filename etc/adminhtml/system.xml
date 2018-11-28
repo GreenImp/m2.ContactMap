@@ -110,7 +110,7 @@
 
                 <field id="color" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Marker Color</label>
-                    <comment>This only works for certain map types</comment>
+                    <comment>Leave empty to use default. This only works for certain map types</comment>
 
                     <frontend_model>Faonni\ContactMap\Block\ColorPicker</frontend_model>
                 </field>

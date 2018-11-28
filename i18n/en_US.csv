@@ -5,6 +5,7 @@
 "Google Map","Google Map"
 "Latitude","Latitude"
 "Leave empty to use default","Leave empty to use default"
+"Leave empty to use default. This only works for certain map types","Leave empty to use default. This only works for certain map types"
 "Longitude","Longitude"
 "Map Type","Map Type"
 "MapBox","MapBox"
