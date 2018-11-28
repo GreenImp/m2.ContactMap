@@ -157,7 +157,7 @@ define(['jquery',],
          * @param {google.maps.Map} map
          */
         setZoom: function (zoom, map) {
-          map.setZoom(zoom);
+          map.setZoom(parseInt(zoom, 10));
         },
         /**
          * Centers the map on the specified `center`
@@ -288,7 +288,7 @@ define(['jquery',],
          * @param {mapboxgl.Map} map
          */
         setZoom: function (zoom, map) {
-          map.setZoom(zoom);
+          map.setZoom(parseInt(zoom, 10));
         },
         /**
          * Centers the map on the specified `center`
@@ -471,7 +471,7 @@ define(['jquery',],
        * @param {*} map
        */
       setZoom: function (zoom, map) {
-        mapLibs[this.mapType].setZoom(zoom, map);
+        mapLibs[this.mapType].setZoom(parseInt(zoom, 10), map);
       }
     };
   });

@@ -107,11 +107,11 @@ class Data extends AbstractHelper
     /**
      * Retrieve Map Zoom
      *
-     * @return string
+     * @return int
      */
     public function getZoom()
     {
-        return $this->_getConfig(self::XML_CONTACTMAP_ZOOM);
+        return intval($this->_getConfig(self::XML_CONTACTMAP_ZOOM));
     }
 
     /**

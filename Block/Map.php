@@ -158,7 +158,7 @@ class Map extends Template
     /**
      * Retrieve Map Zoom
      *
-     * @return string
+     * @return int
      */
     public function getZoom()
     {
