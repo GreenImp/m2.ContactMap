@@ -28,6 +28,12 @@
             <map_details>
                 <zoom>17</zoom>
             </map_details>
+
+            <map_controls>
+                <scaleControl>0</scaleControl>
+
+                <zoomControl>0</zoomControl>
+            </map_controls>
         </contact_map>
     </default>
 </config>

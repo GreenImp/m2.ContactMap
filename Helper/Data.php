@@ -16,6 +16,11 @@ use Magento\Framework\App\Helper\AbstractHelper;
 class Data extends AbstractHelper
 {
     /**
+     * Map Controls Config Path
+     */
+    const XML_CONTACTMAP_CONTROLS_CONFIG = 'contact_map/map_controls';
+    
+    /**
      * Enabled Config Path
      */
     const XML_CONTACTMAP_ENABLED = 'contact_map/map/enabled';
@@ -66,6 +71,22 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Returns the config for map controls
+     *
+     * @return array
+     */
+    public function getMapControlsConfig(){
+        $config = $this->_getConfig(self::XML_CONTACTMAP_CONTROLS_CONFIG) ?? [];
+
+        // force required boolean values to be boolean
+        foreach(['scale', 'zoom'] as $control){
+            $config[$control . 'Control'] = boolval($config[$control . 'Control']);
+        }
+
+        return $config;
+    }
+
+    /**
      * Returns the type of map to be displayed (ie. Google, MapBox)
      *
      * @return null|string
@@ -90,7 +111,8 @@ class Data extends AbstractHelper
      *
      * @return array
      */
-    public function getMarkerData(){
+    public function getMarkerData()
+    {
         return $this->_getConfig(self::XML_CONTACTMAP_MARKER);
     }
 

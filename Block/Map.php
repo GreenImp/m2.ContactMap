@@ -77,14 +77,27 @@ class Map extends Template
      *
      * @return array
      */
-    public function getMapConfig(){
-        return array_merge(
-            [
-                'map_type' => $this->getMapType(),
-                'zoom' => $this->getZoom(),
-            ],
-            $this->getMapTypeConfig()
+    public function getMapConfig()
+    {
+        // add the generic config settings
+        $config = [
+            'map_type' => $this->getMapType(),
+            'zoom' => $this->_helper->getZoom(),
+        ];
+
+        // add any map controls
+        $config = array_merge(
+            $config,
+            $this->_helper->getMapControlsConfig()
         );
+
+        // add in the map type specific config settings
+        $config = array_merge(
+            $config,
+            $this->_helper->getMapTypeConfig()
+        );
+
+        return $config;
     }
 
     /**
@@ -95,16 +108,6 @@ class Map extends Template
     public function getMapType()
     {
         return $this->_helper->getMapType();
-    }
-
-    /**
-     * Returns all of the config values for the given map type
-     *
-     * @return array
-     */
-    public function getMapTypeConfig()
-    {
-        return $this->_helper->getMapTypeConfig();
     }
 
     /**
@@ -153,16 +156,6 @@ class Map extends Template
         ];
 
         return base64_encode(json_encode([$marker]));
-    }
-
-    /**
-     * Retrieve Map Zoom
-     *
-     * @return int
-     */
-    public function getZoom()
-    {
-        return $this->_helper->getZoom();
     }
 
     /**

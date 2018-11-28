@@ -86,6 +86,18 @@
                         <field id="contact_map/map/enabled">1</field>
                     </depends>
                 </field>
+
+                <field id="scaleControl" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Scale</label>
+                    <config_path>contact_map/map_controls/scaleControl</config_path>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="zoomControl" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Zoom Control</label>
+                    <config_path>contact_map/map_controls/zoomControl</config_path>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
             </group>
 
             <group id="marker" translate="label" type="text" showInDefault="1" showInWebsite="1" showInStore="1">

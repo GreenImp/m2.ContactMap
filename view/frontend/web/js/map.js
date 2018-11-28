@@ -44,7 +44,7 @@ define(['jquery',],
     var mapLibs = Object.freeze({
       google: {
         config: {
-          streetViewControl: false,
+          disableDefaultUI: true,
         },
         /**
          * Authorise the use of the API, generally through the use of an API key
@@ -173,6 +173,30 @@ define(['jquery',],
         config: {
           scrollZoom: false,
           style: 'mapbox://styles/mapbox/streets-v10',
+        },
+        events: {
+          /**
+           * Run after the map has been initialised
+           *
+           * @param {mapboxgl.Map} map
+           * @param {{}} config
+           */
+          onAfterInit: function(map, config){
+            if(config.scaleControl) {
+              var scale = new mapboxgl.ScaleControl({
+                maxWidth: 80,
+                unit: 'imperial',
+              });
+
+              map.addControl(scale);
+            }
+
+            if(config.zoomControl){
+              var nav = new mapboxgl.NavigationControl();
+
+              map.addControl(nav, 'top-left');
+            }
+          },
         },
         /**
          * Authorise the use of the API, generally through the use of an API key
@@ -303,24 +327,12 @@ define(['jquery',],
     });
 
 
-    // TODO - determine which options should be shared between map types and build mapping between generic terms and map type specific
     var defaultConfig = Object.freeze({
       mapBoxClass: 'page-map',
       zoom: null,
-      disableDefaultUI: true,
-      zoomControl: false,
-      mapTypeControl: false,
       scaleControl: false,
-      rotateControl: false,
+      zoomControl: false,
     });
-    /*{
-      disableDefaultUI: this.config.disableDefaultUI,
-      zoomControl: this.config.zoomControl,
-      mapTypeControl: this.config.mapTypeControl,
-      scaleControl: this.config.scaleControl,
-      streetViewControl: this.config.streetViewControl,
-      rotateControl: this.config.rotateControl
-    }*/
 
 
     return {
@@ -365,13 +377,14 @@ define(['jquery',],
        */
       initMap: function (key, mapBox) {
         // decode the marker data
-        var collection = JSON.parse(atob(mapBox.getAttribute('data-marker')));
+        var collection = JSON.parse(atob(mapBox.getAttribute('data-marker'))),
+          mapLib = mapLibs[this.mapType];
 
         // build up a storage object for the map
         this.locator[key] = {
-          bounds: mapLibs[this.mapType].bounds.get(),
+          bounds: mapLib.bounds.get(),
           markers: [],
-          map: mapLibs[this.mapType].buildMap(mapBox, this.config),
+          map: mapLib.buildMap(mapBox, this.config),
         };
 
         // loop through each marker data and build the markers
@@ -383,7 +396,7 @@ define(['jquery',],
             return;
           }
 
-          position = mapLibs[this.mapType].getLatLng(data.position);
+          position = mapLib.getLatLng(data.position);
           // build the marker object
           marker = this.buildMarker(position, data.options);
 
@@ -391,7 +404,7 @@ define(['jquery',],
           this.locator[key].markers.push(marker);
 
           // extend the map bounds to include the new marker
-          mapLibs[this.mapType].bounds.extend(this.locator[key].bounds, position);
+          mapLib.bounds.extend(this.locator[key].bounds, position);
         }.bind(this));
 
         // add markers to the map
@@ -402,9 +415,13 @@ define(['jquery',],
           // if no markers, set the default zoom and position
           this.setPosition(1, {lat: 0, lng: 0}, this.locator[key].map);
         } else if (this.config.zoom) {
-          this.setPosition(this.config.zoom, mapLibs[this.mapType].bounds.getCenter(this.locator[key].bounds), this.locator[key].map);
+          this.setPosition(this.config.zoom, mapLib.bounds.getCenter(this.locator[key].bounds), this.locator[key].map);
         } else {
-          this.setCenter(mapLibs[this.mapType].bounds.getCenter(this.locator[key].bounds), this.locator[key].map);
+          this.setCenter(mapLib.bounds.getCenter(this.locator[key].bounds), this.locator[key].map);
+        }
+
+        if(mapLib.events && mapLib.events.onAfterInit && (typeof mapLib.events.onAfterInit === 'function')){
+          mapLib.events.onAfterInit(this.locator[key].map, this.config);
         }
       },
 
