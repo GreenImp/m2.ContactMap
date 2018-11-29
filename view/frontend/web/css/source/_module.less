@@ -2,3 +2,21 @@
     height: 300px;
     margin-bottom:15px;
 }
+
+.page-map{
+    &__address{
+        margin-bottom: @indent__s;
+
+        &::first-line{
+            font-weight: bold;
+        }
+    }
+
+    &__content{
+        margin-bottom: @indent__base;
+
+        *:last-child{
+            margin-bottom: 0;
+        }
+    }
+}

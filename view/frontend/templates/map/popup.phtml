@@ -6,12 +6,16 @@ $storeInfo = $block->getStoreInformation();
 <?php if ($block->isEnabled()) : ?>
     <div id="contact-map-popup" class="page-map__popup">
         <?php if ($block->showAddress()): ?>
-            <address class='pop-address'>
+            <address class="page-map__address">
                 <?= $storeInfo->getFormattedAddress(); ?>
             </address>
         <?php endif; ?>
 
-        <?= $block->getContent(); ?>
+        <?php if($block->getContent()): ?>
+        <div class="page-map__content">
+            <?= $block->getContent(); ?>
+        </div>
+        <?php endif; ?>
 
         <?php if ($block->getShow_directions_link()): ?>
             <a href="<?= $block->getDirectionsURL(); ?>" target="_blank">
