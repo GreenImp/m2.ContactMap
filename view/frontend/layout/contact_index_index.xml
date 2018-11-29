@@ -14,7 +14,9 @@
         </referenceContainer>
 
         <referenceContainer name="content">
-            <block ifconfig="contact_map/map/enabled" class="Faonni\ContactMap\Block\Map" name="contactMap" template="Faonni_ContactMap::map.phtml" before="-"/>
+            <block ifconfig="contact_map/map/enabled" class="Faonni\ContactMap\Block\Map" name="contactMap" template="Faonni_ContactMap::map.phtml" before="-">
+                <block ifconfig="contact_map/popup/enabled" class="Faonni\ContactMap\Block\Popup" name="map.popup" template="Faonni_ContactMap::map/popup.phtml"/>
+            </block>
         </referenceContainer>
     </body>
 </page>

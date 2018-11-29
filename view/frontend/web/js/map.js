@@ -117,6 +117,28 @@ define(['jquery',],
             return new google.maps.Marker(opts);
           },
         },
+        // TODO - add popup functionality
+        popups: {
+          /**
+           * Adds a popup to the map
+           *
+           * @param {*} popup
+           * @param {google.maps.Map} map
+           */
+          add: function(popup, map){
+            console.warn('mapLibs.google.popups.add functionality is not complete');
+          },
+          /**
+           * Builds a popup
+           *
+           * @param {{lat: number, lng: number}|number[]} position
+           * @param {*} content
+           * @param {{}=} options
+           */
+          build: function(position, content, options){
+            console.warn('mapLibs.google.popups.build functionality is not complete');
+          }
+        },
         /**
          * Builds a map object
          *
@@ -270,6 +292,42 @@ define(['jquery',],
             return new mapboxgl.Marker(options).setLngLat(positionObj);
           },
         },
+        popups: {
+          config: {
+            offset: {
+              'top': [0, 5],
+              'top-left': [0, 5],
+              'top-right': [0, 5],
+              'bottom': [0, -41],
+              'bottom-left': [0, -41],
+              'bottom-right': [0, -41],
+              'left': [(27/2) + 5, -41/2],
+              'right': [(-27/2) - 5, -41/2],
+            }
+          },
+          /**
+           * Adds a popup to the map
+           *
+           * @param {mapboxgl.Popup} popup
+           * @param {mapboxgl.Map} map
+           */
+          add: function(popup, map){
+            popup.addTo(map);
+          },
+          /**
+           * Builds a popup
+           *
+           * @param {{lat: number, lng: number}|number[]} position
+           * @param {*} content
+           * @param {{}=} options
+           * @returns {mapboxgl.Popup}
+           */
+          build: function(position, content, options){
+            return new mapboxgl.Popup($.extend({}, mapLibs.mapbox.popups.config, options))
+              .setLngLat(position)
+              .setHTML(content)
+          },
+        },
         /**
          * Builds a map object
          *
@@ -378,7 +436,8 @@ define(['jquery',],
       initMap: function (key, mapBox) {
         // decode the marker data
         var collection = JSON.parse(atob(mapBox.getAttribute('data-marker'))),
-          mapLib = mapLibs[this.mapType];
+          mapLib = mapLibs[this.mapType],
+          popup;
 
         // build up a storage object for the map
         this.locator[key] = {
@@ -410,6 +469,19 @@ define(['jquery',],
         // add markers to the map
         this.addMarkers(key);
 
+        // add the popup to the map (If enabled)
+        if(this.config.popup && this.config.popup.enabled){
+          popup = this.buildPopup(
+            this.config.popup.position,
+            this.config.popup.rendered_content || this.config.popup.content,
+            {
+              anchor: (this.config.popup.anchor !== 'dynamic') ? this.config.popup.anchor : null
+            }
+          );
+
+          this.addPopup(popup, this.locator[key].map);
+        }
+
         // zoom and pan the map
         if (!this.locator[key].markers.length) {
           // if no markers, set the default zoom and position
@@ -437,6 +509,18 @@ define(['jquery',],
       },
 
       /**
+       * Builds a popup
+       *
+       * @param {{lat: number, lng: number}|number[]} position
+       * @param {*} content
+       * @param {{}=} options
+       * @returns {*}
+       */
+      buildPopup: function(position, content, options){
+        return mapLibs[this.mapType].popups.build(position, content, options);
+      },
+
+      /**
        * Adds a marker to the given map
        *
        * @param {*} marker
@@ -457,6 +541,15 @@ define(['jquery',],
         for (var i = 0; i < this.locator[key].markers.length; i++) {
           this.addMarker(this.locator[key].markers[i], this.locator[key].map);
         }
+      },
+
+      /**
+       *
+       * @param {*} popup
+       * @param {*} map
+       */
+      addPopup: function(popup, map){
+        mapLibs[this.mapType].popups.add(popup, map);
       },
 
       /**

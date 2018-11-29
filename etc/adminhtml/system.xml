@@ -22,7 +22,7 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
 
-                <field id="map_type" type="select" translate="label,comment,tooltip" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="map_type" type="select" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Map Type</label>
                     <source_model>Faonni\ContactMap\Model\Config\Source\MapType</source_model>
 
@@ -113,6 +113,55 @@
                     <comment>Leave empty to use default. This only works for certain map types</comment>
 
                     <frontend_model>Faonni\ContactMap\Block\ColorPicker</frontend_model>
+                </field>
+            </group>
+
+            <group id="popup" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Popup</label>
+                <depends>
+                    <field id="contact_map/map/enabled">1</field>
+                    <field id="contact_map/map/map_type">mapbox</field>
+                </depends>
+
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Popup</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="always_show" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Always Show</label>
+                    <comment>Set whether the popup will always be shown or only displayed on click on the marker</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="show_address" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Store Address</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="content" translate="label" type="editor" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Content</label>
+                    <frontend_model>Faonni\ContactMap\Block\Adminhtml\System\Config\Editor</frontend_model>
+                </field>
+
+                <field id="show_directions_link" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Directions Link</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="anchor" type="select" translate="label comment" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Anchor</label>
+                    <comment>The part of the Popup that should be positioned closest to the coordinates</comment>
+                    <source_model>Faonni\ContactMap\Model\Config\Source\Anchor</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
                 </field>
             </group>
         </section>

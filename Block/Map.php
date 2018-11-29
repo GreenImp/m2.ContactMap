@@ -63,6 +63,16 @@ class Map extends Template
     }
 
     /**
+     * Check if the map popup is enabled
+     *
+     * @return bool
+     */
+    public function isPopupEnabled()
+    {
+        return $this->isEnabled() && $this->_helper->isPopupEnabled();
+    }
+
+    /**
      * Retrieve Map Api Key
      *
      * @return string
@@ -96,6 +106,12 @@ class Map extends Template
             $config,
             $this->_helper->getMapTypeConfig()
         );
+
+        // add the popup config if it's enabled
+        if ($this->isPopupEnabled()) {
+            $config['popup'] = $this->_helper->getPopupConfig();
+            $config['popup']['rendered_content'] = $this->getChildHtml('map.popup');
+        }
 
         return $config;
     }

@@ -19,7 +19,7 @@ class Data extends AbstractHelper
      * Map Controls Config Path
      */
     const XML_CONTACTMAP_CONTROLS_CONFIG = 'contact_map/map_controls';
-    
+
     /**
      * Enabled Config Path
      */
@@ -61,6 +61,16 @@ class Data extends AbstractHelper
     const XML_CONTACTMAP_TYPE_CONFIG = 'contact_map/map_type_%s';
 
     /**
+     * Popup Config Path
+     */
+    const XML_CONTACTMAP_POPUP_CONFIG = 'contact_map/popup';
+
+    /**
+     * Popup Enabled Config Path
+     */
+    const XML_CONTACTMAP_POPUP_ENABLED = 'contact_map/popup/enabled';
+
+    /**
      * Check ContactMap Functionality Should Be Enabled
      *
      * @return bool
@@ -71,17 +81,26 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Check if the map popup is enabled
+     *
+     * @return bool
+     */
+    public function isPopupEnabled()
+    {
+        return $this->_getConfig(self::XML_CONTACTMAP_POPUP_ENABLED);
+    }
+
+    /**
      * Returns the config for map controls
      *
      * @return array
      */
-    public function getMapControlsConfig(){
+    public function getMapControlsConfig()
+    {
         $config = $this->_getConfig(self::XML_CONTACTMAP_CONTROLS_CONFIG) ?? [];
 
         // force required boolean values to be boolean
-        foreach(['scale', 'zoom'] as $control){
-            $config[$control . 'Control'] = boolval($config[$control . 'Control']);
-        }
+        $config = $this->parseValuesAsBool($config, ['scaleControl', 'zoomControl']);
 
         return $config;
     }
@@ -160,6 +179,32 @@ class Data extends AbstractHelper
     }
 
     /**
+     * Returns all of the config values for the popup
+     *
+     * @return array
+     */
+    public function getPopupConfig()
+    {
+        $config = $this->_getConfig(self::XML_CONTACTMAP_POPUP_CONFIG);
+
+        // add the marker position as the popup position
+        $config['position'] = $this->getMarkerPosition();
+
+        // force required boolean values to be boolean
+        $config = $this->parseValuesAsBool(
+            $config,
+            [
+                'enabled',
+                'always_show',
+                'show_address',
+                'show_directions_link',
+            ]
+        );
+
+        return $config;
+    }
+
+    /**
      * Retrieve Store Configuration Data
      *
      * @param   string $path
@@ -174,5 +219,29 @@ class Data extends AbstractHelper
         }
 
         return $this->scopeConfig->getValue($path, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * Parse the given value(s) as a boolean.
+     * If `$value` is an array, each element will be parsed.
+     * If `$whitelist` is also defined, only values with keys that exist in the whitelist will be parsed
+     *
+     * @param array|string $value
+     * @param array|null $whitelist
+     * @return array|bool
+     */
+    protected function parseValuesAsBool($value, array $whitelist = null)
+    {
+        if (is_array($value)) {
+            $keys = is_array($whitelist) && !empty($whitelist) ? array_intersect(array_keys($value), $whitelist) : array_keys($value);
+
+            foreach ($keys as $key) {
+                $value[$key] = $this->parseValuesAsBool($value[$key]);
+            }
+
+            return $value;
+        } else {
+            return boolval($value);
+        }
     }
 }

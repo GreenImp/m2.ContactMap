@@ -1,23 +1,23 @@
 <?php
 /**
  * Copyright © 2011-2018 Karliuka Vitalii(karliuka.vitalii@gmail.com)
- * 
+ *
  * See COPYING.txt for license details.
  */
 /** @var $block \Faonni\ContactMap\Block\Map */
 ?>
 <?php if ($block->isEnabled()) : ?>
-<div id="contact-map" class="page-map" data-marker="<?php echo $block->getMarkerData() ?>"></div>
+    <div id="contact-map" class="page-map" data-marker="<?= $block->getMarkerData(); ?>"></div>
 
-<script type="text/javascript">
-	require(
-		[
-		  'jquery',
+    <script type="text/javascript">
+      require(
+        [
+          'jquery',
           'Faonni_ContactMap/js/map',
-          <?= ($block->getMapType() == 'mapbox') ? "'mapboxgl'" : ''; ?>
+            <?= ($block->getMapType() == 'mapbox') ? "'mapboxgl'" : ''; ?>
         ],
-		function($, map, mapboxgl){
-			map.init(<?= json_encode($block->getMapConfig()); ?>);
-		});
-</script>
+        function ($, map, mapboxgl) {
+          map.init(<?= json_encode($block->getMapConfig()); ?>);
+        });
+    </script>
 <?php endif; ?>

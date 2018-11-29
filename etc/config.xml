@@ -34,6 +34,18 @@
 
                 <zoomControl>0</zoomControl>
             </map_controls>
+
+            <popup>
+                <enabled>0</enabled>
+
+                <always_show>1</always_show>
+
+                <show_address>1</show_address>
+
+                <show_directions_link>1</show_directions_link>
+
+                <anchor>dynamic</anchor>
+            </popup>
         </contact_map>
     </default>
 </config>
