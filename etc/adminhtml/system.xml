@@ -2,51 +2,167 @@
 <!--
 /**
  * Copyright © 2011-2018 Karliuka Vitalii(karliuka.vitalii@gmail.com)
- * 
+ *
  * See COPYING.txt for license details.
  */
 -->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <section id="contact">
-            <group id="map" translate="label" type="text" sortOrder="99" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Google Map Options</label>
+        <section id="contact_map" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Contact Map</label>
+            <tab>general</tab>
+            <resource>Magento_Contact::contact</resource>
+
+            <group id="map" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Map Options</label>
+
                 <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Enable Map</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>                      
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="api_key" translate="label" type="obscure" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Google Map Api Key</label>
-					<backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+
+                <field id="map_type" type="select" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Map Type</label>
+                    <source_model>Faonni\ContactMap\Model\Config\Source\MapType</source_model>
+
                     <depends>
                         <field id="enabled">1</field>
-                    </depends>                      
-                </field>                 
-                <field id="latitude" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    </depends>
+                </field>
+            </group>
+
+            <group id="map_type_google" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Google Map</label>
+                <depends>
+                    <field id="contact_map/map/enabled">1</field>
+                    <field id="contact_map/map/map_type">google</field>
+                </depends>
+
+                <field id="api_key" translate="label" type="obscure" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Api Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+            </group>
+
+            <group id="map_type_mapbox" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>MapBox</label>
+                <depends>
+                    <field id="contact_map/map/enabled">1</field>
+                    <field id="contact_map/map/map_type">mapbox</field>
+                </depends>
+
+                <field id="api_key" translate="label" type="obscure" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Api Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+
+                <field id="style_url" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Style URL</label>
+                    <comment>Must be a URL to valid MapBox style</comment>
+                </field>
+            </group>
+
+            <group id="map_details" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Details</label>
+                <depends>
+                    <field id="contact_map/map/enabled">1</field>
+                </depends>
+
+                <field id="latitude" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Latitude</label>
-                    <depends>
-                        <field id="enabled">1</field>
-                    </depends>                      
-                </field> 
-                <field id="longitude" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Longitude</label>
-                    <depends>
-                        <field id="enabled">1</field>
-                    </depends>                      
-                </field>    
-                <field id="zoom" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Zoom Level</label>
-                    <depends>
-                        <field id="enabled">1</field>
-                    </depends>                      
                 </field>
-                <field id="marker" translate="label comment" type="image" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+
+                <field id="longitude" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Longitude</label>
+                </field>
+
+                <field id="zoom" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Zoom Level</label>
+                </field>
+
+                <field id="scaleControl" translate="label" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Scale</label>
+                    <config_path>contact_map/map_controls/scaleControl</config_path>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="zoomControl" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Zoom Control</label>
+                    <config_path>contact_map/map_controls/zoomControl</config_path>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>
+
+            <group id="marker" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Marker</label>
+                <depends>
+                    <field id="contact_map/map/enabled">1</field>
+                </depends>
+
+                <field id="icon" translate="label comment" type="image" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Marker Icon</label>
                     <backend_model>Magento\Config\Model\Config\Backend\Image</backend_model>
                     <upload_dir config="system/filesystem/media" scope_info="1">contact/map/marker</upload_dir>
                     <base_url type="media" scope_info="1">contact/map/marker</base_url>
-                </field>				
+                    <comment>Leave empty to use default</comment>
+                </field>
+
+                <field id="color" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Marker Color</label>
+                    <comment>Leave empty to use default. This only works for certain map types</comment>
+
+                    <frontend_model>Faonni\ContactMap\Block\ColorPicker</frontend_model>
+                </field>
+            </group>
+
+            <group id="popup" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Popup</label>
+                <depends>
+                    <field id="contact_map/map/enabled">1</field>
+                    <field id="contact_map/map/map_type">mapbox</field>
+                </depends>
+
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Popup</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="always_show" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Always Show</label>
+                    <comment>Set whether the popup will always be shown or only displayed on click on the marker</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="show_address" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Store Address</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="content" translate="label" type="editor" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Content</label>
+                    <frontend_model>Faonni\ContactMap\Block\Adminhtml\System\Config\Editor</frontend_model>
+                </field>
+
+                <field id="show_directions_link" translate="label" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show Directions Link</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="anchor" type="select" translate="label comment" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Anchor</label>
+                    <comment>The part of the Popup that should be positioned closest to the coordinates</comment>
+                    <source_model>Faonni\ContactMap\Model\Config\Source\Anchor</source_model>
+                    <depends>
+                        <field id="enabled">1</field>
+                    </depends>
+                </field>
             </group>
         </section>
     </system>
