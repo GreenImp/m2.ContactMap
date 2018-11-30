@@ -294,6 +294,8 @@ define(['jquery',],
         },
         popups: {
           config: {
+            closeButton: false,
+            closeOnClick: false,
             offset: {
               'top': [0, 5],
               'top-left': [0, 5],
@@ -520,9 +522,9 @@ define(['jquery',],
         var config = $.extend({}, options);
 
         // enforce the generic popup class name
-        options.className = (options.className + ' ') + 'page-map__popup';
+        config.className = (options.className + ' ') + 'page-map__popup';
 
-        return mapLibs[this.mapType].popups.build(position, content, options);
+        return mapLibs[this.mapType].popups.build(position, content, config);
       },
 
       /**
