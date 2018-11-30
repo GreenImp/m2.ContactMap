@@ -4,11 +4,11 @@ Extension will assist in adding company or store coordinates with maps directly 
 
 ### Contact Us Page
 
-<img alt="Magento2 Contact Map" src="https://karliuka.github.io/m2/contact-map/contact.png" style="width:100%"/>
+![Magento2 Contact Map](./docs/assets/contact.png)
 
 ### Configuration
 
-<img alt="Magento2 Contact Map" src="https://karliuka.github.io/m2/contact-map/config.png" style="width:100%"/>
+![Magento2 Contact Map Configuration Screen](./docs/assets/config.png)
 
 ## Install with Composer as you go
 
