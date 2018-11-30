@@ -4,26 +4,39 @@ Extension will assist in adding company or store coordinates with maps directly 
 
 ### Contact Us Page
 
-<img alt="Magento2 Contact Map" src="https://karliuka.github.io/m2/contact-map/contact.png" style="width:100%"/>
+![Magento2 Contact Map](./docs/assets/contact.png)
 
 ### Configuration
 
-<img alt="Magento2 Contact Map" src="https://karliuka.github.io/m2/contact-map/config.png" style="width:100%"/>
+![Magento2 Contact Map Configuration Screen](./docs/assets/config.png)
 
 ## Install with Composer as you go
 
 1. Go to Magento2 root folder
 
-2. Enter following commands to install module:
+2. Add the following to your `composer.json` file:
+
+    ```json
+    "repositories": [
+        ...
+        {
+            "type": "vcs",
+            "url": "https://github.com/GreenImp/m2.ContactMap"
+        }
+        ...
+    ]
+    ```
+
+3. Enter following commands to install module:
 
     ```bash
     composer require faonni/module-contact-map
     ```
    Wait while dependencies are updated.
 
-3. Enter following commands to enable module:
+4. Enter following commands to enable module:
 
     ```bash
 	php bin/magento setup:upgrade
 	php bin/magento setup:static-content:deploy
-
+    ```

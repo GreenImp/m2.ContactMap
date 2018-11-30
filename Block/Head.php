@@ -71,7 +71,7 @@ class Head extends Template
     public function getApiKey()
     {
 		return $this->_helper->getApiKey();
-    } 
+    }
 	
     /**
      * Return Locale Code
@@ -81,5 +81,14 @@ class Head extends Template
     public function getLocale()
     {
         return $this->_resolver->getLocale();
-    }    
+    }
+
+    /**
+     * Returns the type of map to be displayed (ie. Google, MapBox)
+     *
+     * @return null|string
+     */
+    public function getMapType(){
+        return $this->_helper->getMapType();
+    }
 }
