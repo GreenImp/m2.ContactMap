@@ -38,7 +38,7 @@ define(['jquery',],
 
     /**
      * List of libraries for each available map type.
-     * They should all have the same public methods, but hanle them in their
+     * They should all have the same public methods, but handle them in their
      * own way internally, specific to the map type
      */
     var mapLibs = Object.freeze({
