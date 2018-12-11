@@ -18,8 +18,8 @@ $storeInfo = $block->getStoreInformation();
         <?php endif; ?>
 
         <?php if ($block->getShow_directions_link()): ?>
-            <a href="<?= $block->getDirectionsURL(); ?>" target="_blank">
-                <?= $block->escapeHtml(__('Click here for Directions')); ?>
+            <a href="<?= $block->getDirectionsURL(); ?>" target="_blank" class="action primary">
+                <?= $block->escapeHtml(__('Directions')); ?>
             </a>
         <?php endif; ?>
     </div>
