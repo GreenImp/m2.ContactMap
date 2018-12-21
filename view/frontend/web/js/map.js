@@ -100,6 +100,16 @@ define(['jquery',],
           add: function (marker, map) {
             marker.setMap(map);
           },
+          // TODO - add popup attachment functionality
+          /**
+           * Attaches the given popup to the marker
+           *
+           * @param {mapboxgl.Marker} marker
+           * @param popup
+           */
+          attachPopup: function (marker, popup) {
+            console.warn('mapLibs.google.markers.attachPopup functionality is not complete');
+          },
           /**
            * Builds a marker
            *
@@ -274,10 +284,19 @@ define(['jquery',],
            * Adds a marker to the map.
            *
            * @param {mapboxgl.Marker} marker
-           * @param map
+           * @param {mapboxgl.Popup} map
            */
           add: function (marker, map) {
             marker.addTo(map);
+          },
+          /**
+           * Attaches the given popup to the marker
+           *
+           * @param {mapboxgl.Marker} marker
+           * @param popup
+           */
+          attachPopup: function (marker, popup) {
+            marker.setPopup(popup);
           },
           /**
            * Builds a marker
@@ -452,7 +471,7 @@ define(['jquery',],
 
         // loop through each marker data and build the markers
         collection.forEach(function (data) {
-          var position, marker;
+          var position, marker, markerPopup;
 
           // don't add the marker if it has no position
           if (!data.position || (data.position.lat === null) || (data.position.lng === null)) {
@@ -468,6 +487,18 @@ define(['jquery',],
 
           // extend the map bounds to include the new marker
           mapLib.bounds.extend(lib.locator[key].bounds, position);
+
+          // check if we need to add a marker specific popup
+          if (data.popup && data.popup.enabled) {
+            // build the popup
+            markerPopup = lib.buildPopup(
+              data.position,
+              data.popup.rendered_content || data.popup.content
+            );
+
+            // attach the popup to the marker so it shows when the marker is interacted with
+            lib.attachPopupToMarker(marker, markerPopup);
+          }
         }.bind(this));
 
         // add markers to the map
@@ -475,6 +506,7 @@ define(['jquery',],
 
         // add the popup to the map (If enabled)
         if (config.popup && config.popup.enabled) {
+          // build the popup
           popup = lib.buildPopup(
             config.popup.position,
             config.popup.rendered_content || config.popup.content,
@@ -483,7 +515,11 @@ define(['jquery',],
             }
           );
 
+          // add the popup to the map
           lib.addPopup(popup, lib.locator[key].map);
+
+          // store a reference to the popup
+          lib.locator[key].globalPopup = popup;
         }
 
         // zoom and pan the map
@@ -550,6 +586,18 @@ define(['jquery',],
         for (var i = 0; i < lib.locator[key].markers.length; i++) {
           lib.addMarker(lib.locator[key].markers[i], lib.locator[key].map);
         }
+      };
+
+      /**
+       * Attaches the given popup to the given marker,
+       * so that it is shown/hidden when the marker is
+       * interacted with
+       *
+       * @param {*} marker
+       * @param {*} popup
+       */
+      this.attachPopupToMarker = function (marker, popup) {
+        mapLibs[mapType].markers.attachPopup(marker, popup);
       };
 
       /**
