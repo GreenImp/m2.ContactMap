@@ -524,7 +524,7 @@ define(['jquery',],
         var config = $.extend({}, options);
 
         // enforce the generic popup class name
-        config.className = (options.className + ' ') + 'page-map__popup';
+        config.className = (config.className + ' ') + 'page-map__popup';
 
         return mapLibs[mapType].popups.build(position, content, config);
       };
