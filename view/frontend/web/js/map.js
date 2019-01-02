@@ -493,7 +493,7 @@ define(['jquery',],
             // build the popup
             markerPopup = lib.buildPopup(
               data.position,
-              data.popup.rendered_content || data.popup.content
+              data.popup
             );
 
             // attach the popup to the marker so it shows when the marker is interacted with
@@ -509,10 +509,7 @@ define(['jquery',],
           // build the popup
           popup = lib.buildPopup(
             config.popup.position,
-            config.popup.rendered_content || config.popup.content,
-            {
-              anchor: (config.popup.anchor !== 'dynamic') ? config.popup.anchor : null
-            }
+            config.popup
           );
 
           // add the popup to the map
@@ -552,12 +549,14 @@ define(['jquery',],
        * Builds a popup
        *
        * @param {{lat: number, lng: number}|number[]} position
-       * @param {*} content
        * @param {{}=} options
        * @returns {*}
        */
-      this.buildPopup = function (position, content, options) {
-        var config = $.extend({}, options);
+      this.buildPopup = function (position, options) {
+        var config = $.extend({}, options),
+            content = config.rendered_content || config.content;
+
+        config.anchor = (config.anchor !== 'dynamic') ? config.anchor : null;
 
         // enforce the generic popup class name
         config.className = (config.className + ' ') + 'page-map__popup';
