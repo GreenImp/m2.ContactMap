@@ -58,6 +58,15 @@ class Popup extends Template
     }
 
     /**
+     * Returns the formatted address for the store
+     *
+     * @return string
+     */
+    public function getFormattedAddress(){
+        return $this->getStoreInformation()->getFormattedAddress();
+    }
+
+    /**
      * Returns the URL to view store address directions
      * 
      * @return string
@@ -79,7 +88,7 @@ class Popup extends Template
      *
      * @return StoreInformation
      */
-    public function getStoreInformation(){
+    protected function getStoreInformation(){
         return $this->storeInfoBlock;
     }
 

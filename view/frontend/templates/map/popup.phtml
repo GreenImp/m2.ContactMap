@@ -1,13 +1,11 @@
 <?php
 /** @var $block \Faonni\ContactMap\Block\Popup */
-
-$storeInfo = $block->getStoreInformation();
 ?>
 <?php if ($block->isEnabled()) : ?>
     <div id="contact-map-popup" class="page-map__popup">
-        <?php if ($block->showAddress()): ?>
+        <?php if ($block->showAddress() && !empty($block->getFormattedAddress())): ?>
             <address class="page-map__address">
-                <?= $storeInfo->getFormattedAddress(); ?>
+                <?= $block->getFormattedAddress(); ?>
             </address>
         <?php endif; ?>
 
@@ -17,7 +15,7 @@ $storeInfo = $block->getStoreInformation();
         </div>
         <?php endif; ?>
 
-        <?php if ($block->getShow_directions_link()): ?>
+        <?php if ($block->getShow_directions_link() && !empty($block->getDirectionsURL())): ?>
             <a href="<?= $block->getDirectionsURL(); ?>" target="_blank" class="action primary">
                 <?= $block->escapeHtml(__('Directions')); ?>
             </a>

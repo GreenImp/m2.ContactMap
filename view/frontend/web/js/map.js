@@ -100,6 +100,16 @@ define(['jquery',],
           add: function (marker, map) {
             marker.setMap(map);
           },
+          // TODO - add popup attachment functionality
+          /**
+           * Attaches the given popup to the marker
+           *
+           * @param {mapboxgl.Marker} marker
+           * @param popup
+           */
+          attachPopup: function (marker, popup) {
+            console.warn('mapLibs.google.markers.attachPopup functionality is not complete');
+          },
           /**
            * Builds a marker
            *
@@ -125,7 +135,7 @@ define(['jquery',],
            * @param {*} popup
            * @param {google.maps.Map} map
            */
-          add: function(popup, map){
+          add: function (popup, map) {
             console.warn('mapLibs.google.popups.add functionality is not complete');
           },
           /**
@@ -135,7 +145,7 @@ define(['jquery',],
            * @param {*} content
            * @param {{}=} options
            */
-          build: function(position, content, options){
+          build: function (position, content, options) {
             console.warn('mapLibs.google.popups.build functionality is not complete');
           }
         },
@@ -203,8 +213,8 @@ define(['jquery',],
            * @param {mapboxgl.Map} map
            * @param {{}} config
            */
-          onAfterInit: function(map, config){
-            if(config.scaleControl) {
+          onAfterInit: function (map, config) {
+            if (config.scaleControl) {
               var scale = new mapboxgl.ScaleControl({
                 maxWidth: 80,
                 unit: 'imperial',
@@ -213,7 +223,7 @@ define(['jquery',],
               map.addControl(scale);
             }
 
-            if(config.zoomControl){
+            if (config.zoomControl) {
               var nav = new mapboxgl.NavigationControl();
 
               map.addControl(nav, 'top-left');
@@ -274,10 +284,19 @@ define(['jquery',],
            * Adds a marker to the map.
            *
            * @param {mapboxgl.Marker} marker
-           * @param map
+           * @param {mapboxgl.Popup} map
            */
           add: function (marker, map) {
             marker.addTo(map);
+          },
+          /**
+           * Attaches the given popup to the marker
+           *
+           * @param {mapboxgl.Marker} marker
+           * @param popup
+           */
+          attachPopup: function (marker, popup) {
+            marker.setPopup(popup);
           },
           /**
            * Builds a marker
@@ -303,8 +322,8 @@ define(['jquery',],
               'bottom': [0, -41],
               'bottom-left': [0, -41],
               'bottom-right': [0, -41],
-              'left': [(27/2) + 5, -41/2],
-              'right': [(-27/2) - 5, -41/2],
+              'left': [(27 / 2) + 5, -41 / 2],
+              'right': [(-27 / 2) - 5, -41 / 2],
             }
           },
           /**
@@ -313,7 +332,7 @@ define(['jquery',],
            * @param {mapboxgl.Popup} popup
            * @param {mapboxgl.Map} map
            */
-          add: function(popup, map){
+          add: function (popup, map) {
             popup.addTo(map);
           },
           /**
@@ -324,10 +343,10 @@ define(['jquery',],
            * @param {{}=} options
            * @returns {mapboxgl.Popup}
            */
-          build: function(position, content, options){
+          build: function (position, content, options) {
             return new mapboxgl.Popup($.extend({}, mapLibs.mapbox.popups.config, options))
               .setLngLat(position)
-              .setHTML(content)
+              .setHTML(content);
           },
         },
         /**
@@ -395,62 +414,64 @@ define(['jquery',],
     });
 
 
-    return {
-      mapType: null,
-      config: {},
-      locator: [],
+    var MapHandler = function (userConfig) {
+      var mapType = userConfig.map_type || 'google',
+        lib = this,
+        config = $.extend(
+          {},
+          defaultConfig,
+          mapLibs[mapType].config,
+          mapConfig(userConfig, mapLibs[mapType].configMap)
+        );
+
+      this.locator = [];
 
       /**
-       * Initialises all the maps
-       *
-       * @param {{}=} config
+       * Initialise the map handler
        */
-      init: function (config) {
-        this.mapType = config.map_type || 'google';
+      var init = function () {
+        // authorise the map API
+        mapLibs[mapType].authoriseAPI(config.api_key);
 
-        this.config = $.extend({}, defaultConfig, mapLibs[this.mapType].config, mapConfig(config, mapLibs[this.mapType].configMap));
-
-        mapLibs[this.mapType].authoriseAPI(config.api_key);
-
-        if (this.mapType === 'google') {
-          google.maps.event.addDomListener(window, 'load', this.initMaps.bind(this));
+        if (mapType === 'google') {
+          google.maps.event.addDomListener(window, 'load', initMaps.bind(lib));
         } else {
-          this.initMaps();
+          initMaps();
         }
-      },
+      };
 
       /**
        * Initialises each individual map
        */
-      initMaps: function () {
+      var initMaps = function () {
         // loop through each map on the page and initialise it
-        $('.' + this.config.mapBoxClass).each(function (key, mapBox) {
-          this.initMap(key, mapBox);
-        }.bind(this));
-      },
+        $('.' + config.mapBoxClass).each(function (key, mapBox) {
+          lib.initMap(key, mapBox);
+        }.bind(lib));
+      };
 
       /**
        * Initialises the map
        *
        * @param {Number|string} key
-       * @param {*} mapBox
+       * @param {*} mapBox The HTML element that the map should be attached to
        */
-      initMap: function (key, mapBox) {
+      this.initMap = function (key, mapBox) {
         // decode the marker data
         var collection = JSON.parse(atob(mapBox.getAttribute('data-marker'))),
-          mapLib = mapLibs[this.mapType],
+          mapLib = mapLibs[mapType],
           popup;
 
         // build up a storage object for the map
-        this.locator[key] = {
+        lib.locator[key] = {
           bounds: mapLib.bounds.get(),
           markers: [],
-          map: mapLib.buildMap(mapBox, this.config),
+          map: mapLib.buildMap(mapBox, config),
         };
 
         // loop through each marker data and build the markers
         collection.forEach(function (data) {
-          var position, marker;
+          var position, marker, markerPopup;
 
           // don't add the marker if it has no position
           if (!data.position || (data.position.lat === null) || (data.position.lng === null)) {
@@ -459,45 +480,59 @@ define(['jquery',],
 
           position = mapLib.getLatLng(data.position);
           // build the marker object
-          marker = this.buildMarker(position, data.options);
+          marker = lib.buildMarker(position, data.options);
 
           // add the marker to the list
-          this.locator[key].markers.push(marker);
+          lib.locator[key].markers.push(marker);
 
           // extend the map bounds to include the new marker
-          mapLib.bounds.extend(this.locator[key].bounds, position);
+          mapLib.bounds.extend(lib.locator[key].bounds, position);
+
+          // check if we need to add a marker specific popup
+          if (data.popup && data.popup.enabled) {
+            // build the popup
+            markerPopup = lib.buildPopup(
+              data.position,
+              data.popup
+            );
+
+            // attach the popup to the marker so it shows when the marker is interacted with
+            lib.attachPopupToMarker(marker, markerPopup);
+          }
         }.bind(this));
 
         // add markers to the map
-        this.addMarkers(key);
+        lib.addMarkers(key);
 
         // add the popup to the map (If enabled)
-        if(this.config.popup && this.config.popup.enabled){
-          popup = this.buildPopup(
-            this.config.popup.position,
-            this.config.popup.rendered_content || this.config.popup.content,
-            {
-              anchor: (this.config.popup.anchor !== 'dynamic') ? this.config.popup.anchor : null
-            }
+        if (config.popup && config.popup.enabled) {
+          // build the popup
+          popup = lib.buildPopup(
+            config.popup.position,
+            config.popup
           );
 
-          this.addPopup(popup, this.locator[key].map);
+          // add the popup to the map
+          lib.addPopup(popup, lib.locator[key].map);
+
+          // store a reference to the popup
+          lib.locator[key].globalPopup = popup;
         }
 
         // zoom and pan the map
-        if (!this.locator[key].markers.length) {
+        if (!lib.locator[key].markers.length) {
           // if no markers, set the default zoom and position
-          this.setPosition(1, {lat: 0, lng: 0}, this.locator[key].map);
-        } else if (this.config.zoom) {
-          this.setPosition(this.config.zoom, mapLib.bounds.getCenter(this.locator[key].bounds), this.locator[key].map);
+          lib.setPosition(1, {lat: 0, lng: 0}, lib.locator[key].map);
+        } else if (config.zoom) {
+          lib.setPosition(config.zoom, mapLib.bounds.getCenter(lib.locator[key].bounds), lib.locator[key].map);
         } else {
-          this.setCenter(mapLib.bounds.getCenter(this.locator[key].bounds), this.locator[key].map);
+          lib.setCenter(mapLib.bounds.getCenter(lib.locator[key].bounds), lib.locator[key].map);
         }
 
-        if(mapLib.events && mapLib.events.onAfterInit && (typeof mapLib.events.onAfterInit === 'function')){
-          mapLib.events.onAfterInit(this.locator[key].map, this.config);
+        if (mapLib.events && mapLib.events.onAfterInit && (typeof mapLib.events.onAfterInit === 'function')) {
+          mapLib.events.onAfterInit(lib.locator[key].map, config);
         }
-      },
+      };
 
       /**
        * Builds a marker
@@ -506,26 +541,28 @@ define(['jquery',],
        * @param {{}=} options
        * @returns {google.maps.Marker|mapboxgl.Marker}
        */
-      buildMarker: function (position, options) {
-        return mapLibs[this.mapType].markers.build(position, options);
-      },
+      this.buildMarker = function (position, options) {
+        return mapLibs[mapType].markers.build(position, options);
+      };
 
       /**
        * Builds a popup
        *
        * @param {{lat: number, lng: number}|number[]} position
-       * @param {*} content
        * @param {{}=} options
        * @returns {*}
        */
-      buildPopup: function(position, content, options){
-        var config = $.extend({}, options);
+      this.buildPopup = function (position, options) {
+        var config = $.extend({}, options),
+            content = config.rendered_content || config.content;
+
+        config.anchor = (config.anchor !== 'dynamic') ? config.anchor : null;
 
         // enforce the generic popup class name
-        config.className = (options.className + ' ') + 'page-map__popup';
+        config.className = (config.className + ' ') + 'page-map__popup';
 
-        return mapLibs[this.mapType].popups.build(position, content, config);
-      },
+        return mapLibs[mapType].popups.build(position, content, config);
+      };
 
       /**
        * Adds a marker to the given map
@@ -533,9 +570,9 @@ define(['jquery',],
        * @param {*} marker
        * @param {*} map
        */
-      addMarker: function (marker, map) {
-        mapLibs[this.mapType].markers.add(marker, map);
-      },
+      this.addMarker = function (marker, map) {
+        mapLibs[mapType].markers.add(marker, map);
+      };
 
       /**
        * Renders the features on the specified map. If map is set to null, the features will be
@@ -544,20 +581,32 @@ define(['jquery',],
        * @param {int} key
        * @return void
        */
-      addMarkers: function (key) {
-        for (var i = 0; i < this.locator[key].markers.length; i++) {
-          this.addMarker(this.locator[key].markers[i], this.locator[key].map);
+      this.addMarkers = function (key) {
+        for (var i = 0; i < lib.locator[key].markers.length; i++) {
+          lib.addMarker(lib.locator[key].markers[i], lib.locator[key].map);
         }
-      },
+      };
+
+      /**
+       * Attaches the given popup to the given marker,
+       * so that it is shown/hidden when the marker is
+       * interacted with
+       *
+       * @param {*} marker
+       * @param {*} popup
+       */
+      this.attachPopupToMarker = function (marker, popup) {
+        mapLibs[mapType].markers.attachPopup(marker, popup);
+      };
 
       /**
        *
        * @param {*} popup
        * @param {*} map
        */
-      addPopup: function(popup, map){
-        mapLibs[this.mapType].popups.add(popup, map);
-      },
+      this.addPopup = function (popup, map) {
+        mapLibs[mapType].popups.add(popup, map);
+      };
 
       /**
        * Sets the zoom and center position of the map
@@ -566,10 +615,10 @@ define(['jquery',],
        * @param {{lat: number, lng: number}|number[]} center
        * @param {*} map
        */
-      setPosition: function (zoom, center, map) {
-        this.setZoom(zoom, map);
-        this.setCenter(center, map);
-      },
+      this.setPosition = function (zoom, center, map) {
+        lib.setZoom(zoom, map);
+        lib.setCenter(center, map);
+      };
 
       /**
        * Centers the map on the specified `center`
@@ -577,9 +626,9 @@ define(['jquery',],
        * @param {{lat: number, lng: number}|number[]} center
        * @param {*} map
        */
-      setCenter: function (center, map) {
-        mapLibs[this.mapType].setCenter(center, map);
-      },
+      this.setCenter = function (center, map) {
+        mapLibs[mapType].setCenter(center, map);
+      };
 
       /**
        * Sets the zoom level on the map
@@ -587,8 +636,23 @@ define(['jquery',],
        * @param {Number} zoom
        * @param {*} map
        */
-      setZoom: function (zoom, map) {
-        mapLibs[this.mapType].setZoom(parseInt(zoom, 10), map);
-      }
+      this.setZoom = function (zoom, map) {
+        mapLibs[mapType].setZoom(parseInt(zoom, 10), map);
+      };
+
+
+      init();
+    };
+
+
+    return {
+      /**
+       * Initialises all the maps
+       *
+       * @param {{}=} config
+       */
+      init: function (config) {
+        return new MapHandler(config);
+      },
     };
   });
