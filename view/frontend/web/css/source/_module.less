@@ -20,3 +20,22 @@
         }
     }
 }
+
+.page-map--marker-pointer{
+    .mapboxgl-marker{
+        cursor: pointer;
+    }
+}
+
+/**
+ * Style popup close button so it doesn't use Magento button styling
+ */
+.mapboxgl-popup-close-button{
+    color: @primary__color;
+    background: none;
+    border: none;
+
+    &:hover{
+        border: none;
+    }
+}
